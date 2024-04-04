@@ -1,3 +1,34 @@
+## About Remotion
+
+### Optionally add Composition
+
+**Without this studio doesn't work.**
+
+Everything starts with a <Composition> component in the root. This is where you give settings like durationInFrames, fps, width, height, and then give the main component (eg. `Main`)
+
+If you want one component to follow different settings, make another <Composition> component in the root, and give it the new component.
+
+### About Player
+
+After that in the file we want to render it in, start with <Player> Give it the base component.
+
+After a component is wrapped with <Player>, it gains access to all the settings from the <Composition> component. You can also get the current frame.
+
+```const frame = useCurrentFrame();
+  const { fps, width, height, durationInFrames } = useVideoConfig();
+
+
+
+
+
+
+
+
+
+
+
+```
+
 <img src="https://github.com/remotion-dev/template-next/assets/1629785/9092db5f-7c0c-4d38-97c4-5f5a61f5cc098" />
 <br/>
 <br/>

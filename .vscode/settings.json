@@ -1,5 +1,20 @@
 {
   "editor.tabSize": 2,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "workbench.colorCustomizations": {
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#8e30cd",
+    "statusBar.background": "#7126a4",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#8e30cd",
+    "statusBarItem.remoteBackground": "#7126a4",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "tab.activeBorder": "#8e30cd",
+    "titleBar.activeBackground": "#7126a4",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#7126a499",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#7126a4"
 }
