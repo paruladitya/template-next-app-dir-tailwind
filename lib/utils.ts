@@ -34,5 +34,5 @@ export function calculateTranslation(
   translateX = Math.max(translateX, containerWidth - scaledImageWidth);
   translateY = Math.max(translateY, containerHeight - scaledImageHeight);
 
-  return { translateX, translateY };
+  return { x: translateX, y: translateY };
 }

@@ -9,9 +9,12 @@ import {
 
 import { cursorImg } from "../../types/constants";
 import { calculateTranslation } from "../../lib/utils";
+import { useEffect, useState } from "react";
 
 export const ImgViewer = ({ img, i }: { img: any; i: number }) => {
   const frame = useCurrentFrame();
+  const [startPoint, setStartPoint] = useState<any>({ x: 0, y: 0 });
+  const [endPoint, setEndPoint] = useState<any>({ x: 0, y: 0 });
   const { durationInFrames, fps } = useVideoConfig();
 
   const transformOrigin = "top left";
@@ -30,10 +33,40 @@ export const ImgViewer = ({ img, i }: { img: any; i: number }) => {
     to: 1.6,
   });
 
-  const { translateX, translateY }: any = calculateTranslation(1.6, {
-    x: img.end.x,
-    y: img.end.y,
+  const movementProgress = spring({
+    frame: frame, // This could be the current frame or another counter
+    fps: fps,
+    config: { damping: 18, mass: 1.5, stiffness: 36 },
+    from: 0,
+    to: 1,
+    durationInFrames,
   });
+
+  useEffect(() => {
+    const sp: any = calculateTranslation(1.6, {
+      x: img.start.x,
+      y: img.start.y,
+    });
+
+    const ep: any = calculateTranslation(1.6, {
+      x: img.end.x,
+      y: img.end.y,
+    });
+
+    setStartPoint(sp);
+    setEndPoint(ep);
+  }, [img]);
+
+  const positionX = interpolate(
+    movementProgress,
+    [0, 1],
+    [startPoint.x, endPoint.x]
+  ); // X: 0 -> 500
+  const positionY = interpolate(
+    movementProgress,
+    [0, 1],
+    [startPoint.y, endPoint.y]
+  ); // Y: 0 -> 500
 
   return (
     <AbsoluteFill style={{ opacity: 1 }}>
@@ -45,7 +78,7 @@ export const ImgViewer = ({ img, i }: { img: any; i: number }) => {
           height: "100%",
           transformOrigin: transformOrigin,
           // transform: `${scale} ${translate}`,
-          transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
+          transform: `scale(${scale}) translate(${positionX}px, ${positionY}px)`,
         }}
       />
       <MovingDiv img={img} />
