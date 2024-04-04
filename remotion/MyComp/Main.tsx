@@ -40,7 +40,7 @@ let imgArr = [
   },
   {
     src: "https://ximg.20paths.com/a45eaa8b-3ddf-4218-954d-97851d5dc2aa/9ef767ae-3f4a-464e-9c55-f80aa51c7d3f.jpeg",
-    end: { x: 1248, y: 653 },
+    start: { x: 1248, y: 653 },
     end: { x: 1178, y: 101 },
   },
 ];
@@ -72,23 +72,15 @@ export const Main = ({ title }: z.infer<typeof CompositionProps>) => {
 
   return (
     <AbsoluteFill className="bg-white">
-      <Sequence durationInFrames={transitionStart + transitionDuration}>
+      {/* <Sequence durationInFrames={transitionStart + transitionDuration}>
         <Rings outProgress={logoOut}></Rings>
         <AbsoluteFill className="justify-center items-center">
           <NextLogo outProgress={logoOut}></NextLogo>
         </AbsoluteFill>
-      </Sequence>
+      </Sequence> */}
       {imgArr.map((img, i) => (
-        <Sequence
-          from={
-            i === 0
-              ? transitionStart + transitionDuration
-              : transitionStart + transitionDuration + i * 160
-          }
-          durationInFrames={160}
-          key={i}
-        >
-          <ImgViewer img={img}></ImgViewer>
+        <Sequence from={i * 160} durationInFrames={160} key={i}>
+          <ImgViewer img={img} i={i}></ImgViewer>
           {/* <ImgViewerBlur img={img}></ImgViewerBlur> */}
         </Sequence>
       ))}

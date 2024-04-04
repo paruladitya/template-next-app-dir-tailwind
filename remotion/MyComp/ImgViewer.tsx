@@ -4,50 +4,85 @@ import {
   interpolate,
   Img,
   AbsoluteFill,
+  spring,
 } from "remotion";
 
 import { cursorImg } from "../../types/constants";
-import { Trail } from "@remotion/motion-blur";
+import { calculateTranslation } from "../../lib/utils";
 
-export const ImgViewer = ({ img }: { img: any }) => {
+export const ImgViewer = ({ img, i }: { img: any; i: number }) => {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
+  const { durationInFrames, fps } = useVideoConfig();
 
-  // Assuming each image sequence lasts for 80 frames
-  const totalDuration = 160;
-  // Calculate position for the moving element
-  const startX = interpolate(
-    frame,
-    [0, totalDuration],
-    [parseFloat(img?.start?.x), parseFloat(img?.end?.x)]
-  );
-  const startY = interpolate(
-    frame,
-    [0, totalDuration],
-    [parseFloat(img?.start?.y), parseFloat(img?.end?.y)]
-  );
+  const transformOrigin = "top left";
 
-  // console.log("startx and y", startX, startY);
+  const scale = spring({
+    frame,
+    fps,
+    config: {
+      damping: 18,
+      mass: 1.5,
+      stiffness: 36,
+    },
+    overshootClamping: true,
+    durationInFrames: 160,
+    from: i === 0 ? 1 : 1.6,
+    to: 1.6,
+  });
+
+  const { translateX, translateY }: any = calculateTranslation(1.6, {
+    x: img.end.x,
+    y: img.end.y,
+  });
 
   return (
     <AbsoluteFill style={{ opacity: 1 }}>
       {/* Using Remotion's Img tag for optimized image rendering */}
-      <Img src={img.src} style={{ width: "100%", height: "100%" }} />
-
-      <AbsoluteFill
+      <Img
+        src={img.src}
         style={{
-          width: "50px",
-          height: "60px",
-          // top: `${10}px`,
-          // left: `${100}px`,
-          top: `${startY}px`,
-          left: `${startX}px`,
-          backgroundColor: "blue",
+          width: "100%",
+          height: "100%",
+          transformOrigin: transformOrigin,
+          // transform: `${scale} ${translate}`,
+          transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
         }}
-      >
-        <Img src={cursorImg} style={{ width: "100%", height: "100%" }}></Img>
-        {/* You can place any content or just leave it empty if you want to move a dot */}
-      </AbsoluteFill>
+      />
+      <MovingDiv img={img} />
+    </AbsoluteFill>
+  );
+};
+
+const MovingDiv = ({ img }: { img: any }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Use the spring function to animate
+  const progress = spring({
+    frame: frame,
+    fps: fps,
+    config: {
+      damping: 200,
+      stiffness: 100,
+      mass: 1,
+    },
+    durationInFrames: 130,
+  });
+
+  // Calculate position based on progress
+  const positionX = interpolate(progress, [0, 1], [img.start.x, img.end.x]); // X: 0 -> 500
+  const positionY = interpolate(progress, [0, 1], [img.start.y, img.end.y]); // Y: 0 -> 500
+
+  return (
+    <AbsoluteFill
+      style={{
+        width: 70,
+        height: 84,
+        // backgroundColor: "royalblue",
+        transform: `translate(${positionX}px, ${positionY}px)`,
+      }}
+    >
+      <Img src={cursorImg} style={{ width: "100%", height: "100%" }}></Img>
     </AbsoluteFill>
   );
 };
